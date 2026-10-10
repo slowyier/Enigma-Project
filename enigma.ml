@@ -15,7 +15,7 @@ type config = {
 }
 
 let index _c =
-  failwith "Unimplemented"
+  Char.code _c - Char.code 'A'
 
 let map_r_to_l _wiring _top_letter _input_pos =
   failwith "Unimplemented"
