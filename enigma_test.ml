@@ -46,6 +46,32 @@ let map_plug_test name plugs input expected =
 let cipher_char_test name config input expected =
   name >:: fun _ ->
     assert_equal expected (cipher_char config input)
+
+
+let make_rotor wiring turnover top_letter =
+  { rotor = { wiring; turnover }; top_letter }
+
+let step_test name start expected =
+  name >:: fun _ ->
+    let config = {
+      refl = identity;
+      rotors = [
+        make_rotor rotor_III 'V' start.[0];
+        make_rotor rotor_II 'E' start.[1];
+        make_rotor rotor_I 'Q' start.[2];
+      ];
+      plugboard = [];
+    } in
+
+    let result = step config in
+    let letters =
+      String.concat ""
+        (List.map
+          (fun r -> String.make 1 r.top_letter)
+          result.rotors)
+    in
+
+    assert_equal expected letters
 let suite =
   "Enigma test suite" >::: [
     (* Index tests *)
@@ -109,6 +135,17 @@ let suite =
 
     cipher_char_test "three rotors B"
       (make_config [r1; r2; r3]) 'B' 'E';
+
+    (* Rotor stepping tests *)
+    step_test "KDO to KDP" "KDO" "KDP";
+    step_test "KDP to KDQ" "KDP" "KDQ";
+    step_test "KDQ to KER" "KDQ" "KER";
+    step_test "KER to LFS" "KER" "LFS";
+    step_test "LFS to LFT" "LFS" "LFT";
+
+    step_test "VDP to VDQ" "VDP" "VDQ";
+    step_test "VDQ to VER" "VDQ" "VER";
+    step_test "VER to WFS" "VER" "WFS";
   ]
 
 let () = run_test_tt_main suite
