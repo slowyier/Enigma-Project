@@ -5,6 +5,22 @@ let rotor_I = "EKMFLGDQVZNTOWYHXUSPAIBRCJ"
 let rotor_III = "BDFHJLCPRTXVZNYEIWGAKMUSQO"
 let identity = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+let rotor_II = "AJDKSIRUXBLHWTMCQGZNPYFVOE"
+let reflector_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
+
+let make_rotor wiring turnover top_letter =
+  { rotor = { wiring; turnover }; top_letter }
+
+let r1 = make_rotor rotor_I 'Q' 'A'
+let r2 = make_rotor rotor_II 'E' 'A'
+let r3 = make_rotor rotor_III 'V' 'A'
+
+let make_config rotors =
+  {
+    refl = reflector_B;
+    rotors = rotors;
+    plugboard = [];
+  }
 let reflector_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
 
 let index_test name input expected =
@@ -26,6 +42,10 @@ let map_refl_test name wiring input expected =
 let map_plug_test name plugs input expected =
   name >:: fun _ ->
     assert_equal expected (map_plug plugs input)
+
+let cipher_char_test name config input expected =
+  name >:: fun _ ->
+    assert_equal expected (cipher_char config input)
 let suite =
   "Enigma test suite" >::: [
     (* Index tests *)
@@ -71,6 +91,24 @@ let suite =
     map_plug_test "Y to X" [('A', 'Z'); ('X', 'Y')] 'Y' 'X';
 
     map_plug_test "unchanged B" [('A', 'Z'); ('X', 'Y')] 'B' 'B';
+    (* Cipher character and rotor traversal tests *)
+    cipher_char_test "no rotors A"
+      (make_config []) 'A' 'Y';
+
+    cipher_char_test "one rotor A"
+      (make_config [r1]) 'A' 'H';
+
+    cipher_char_test "two rotors G"
+      (make_config [r1; r2]) 'G' 'V';
+
+    cipher_char_test "three rotors G"
+      (make_config [r1; r2; r3]) 'G' 'P';
+
+    cipher_char_test "three rotors A"
+      (make_config [r1; r2; r3]) 'A' 'U';
+
+    cipher_char_test "three rotors B"
+      (make_config [r1; r2; r3]) 'B' 'E';
   ]
 
 let () = run_test_tt_main suite
