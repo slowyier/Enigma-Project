@@ -43,6 +43,20 @@ let rec map_plug plugs c =
       else if c = b then a
       else map_plug rest c
 
+let rec map_rotors_r_to_l rotors pos =
+  match rotors with
+  | [] -> pos
+  | r :: rest ->
+      let next_pos = map_r_to_l r.rotor.wiring r.top_letter pos in
+      map_rotors_r_to_l rest next_pos
+
+let rec map_rotors_l_to_r rotors pos =
+  match rotors with
+  | [] -> pos
+  | r :: rest ->
+      let next_pos = map_l_to_r r.rotor.wiring r.top_letter pos in
+      map_rotors_l_to_r rest next_pos
+      
 let cipher_char _config _c =
   failwith "Unimplemented"
 
