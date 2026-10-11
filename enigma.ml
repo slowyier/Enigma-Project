@@ -25,7 +25,12 @@ let map_r_to_l _wiring _top_letter _input_pos =
   outer_index
 
 let map_l_to_r _wiring _top_letter _input_pos =
-  failwith "Unimplemented"
+  let offset = index _top_letter in
+  let internal_pos = (_input_pos + offset) mod 26 in
+  let letter = Char.chr (internal_pos + Char.code 'A') in
+  let wire_pos = String.index _wiring letter in
+  let outer_index = (wire_pos - offset + 26) mod 26 in
+  outer_index
 
 let map_refl _wiring _input_pos =
   failwith "Unimplemented"
