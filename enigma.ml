@@ -33,7 +33,7 @@ let map_l_to_r _wiring _top_letter _input_pos =
   outer_index
 
 let map_refl _wiring _input_pos =
-  failwith "Unimplemented"
+  index _wiring.[_input_pos]
 
 let map_plug _plugs _c =
   failwith "Unimplemented"
