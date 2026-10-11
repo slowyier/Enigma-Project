@@ -98,4 +98,4 @@ let step _config =
 let cipher _config _s =
   failwith "Unimplemented"
 
-let hours_worked = 0
+let hours_worked = 6
