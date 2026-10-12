@@ -21,7 +21,7 @@ let make_config rotors =
     rotors = rotors;
     plugboard = [];
   }
-let reflector_B = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
+
 
 let index_test name input expected =
   name >:: fun _ ->
@@ -61,10 +61,6 @@ let full_config = {
   plugboard = [('A', 'Z')];
 }
 
-
-let make_rotor wiring turnover top_letter =
-  { rotor = { wiring; turnover }; top_letter }
-
 let step_test name start expected =
   name >:: fun _ ->
     let config = {
@@ -89,8 +85,12 @@ let step_test name start expected =
 let suite =
   "Enigma test suite" >::: [
     (* Index tests *)
+    
     index_test "index of A is 0" 'A' 0;
     index_test "index of Z is 25" 'Z' 25;
+    index_test "index of B is 1" 'B' 1;
+    index_test "index of M is 12" 'M' 12;
+    index_test "index of Y is 24" 'Y' 24;
 
     (* Rotor mapping tests *)
     map_r_to_l_test "identity A 0" identity 'A' 0 0;
@@ -162,6 +162,10 @@ let suite =
     step_test "VER to WFS" "VER" "WFS";
 
     cipher_test "full Enigma cipher" full_config "YNGXQ" "OCAML";
+    cipher_test "empty string" full_config "" "";
+    cipher_test "single character" full_config "A" "N";
+    cipher_test "decrypt OCAML" full_config "OCAML" "YNGXQ";
+    cipher_test "repeated letters" full_config "AAAAA" "NLGPZ";
   ]
 
 let () = run_test_tt_main suite
