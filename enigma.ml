@@ -95,7 +95,15 @@ let step _config =
 
   { _config with rotors = step_rotors true _config.rotors }
 
-let cipher _config _s =
-  failwith "Unimplemented"
+let cipher config s =
+  let rec aux current_config i acc =
+    if i >= String.length s then
+      String.concat "" (List.rev acc)
+    else
+      let new_config = step current_config in
+      let encrypted = cipher_char new_config s.[i] in
+      aux new_config (i + 1) (String.make 1 encrypted :: acc)
+  in
+  aux config 0 []
 
-let hours_worked = 6
+let hours_worked = 9

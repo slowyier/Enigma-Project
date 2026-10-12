@@ -47,6 +47,20 @@ let cipher_char_test name config input expected =
   name >:: fun _ ->
     assert_equal expected (cipher_char config input)
 
+let cipher_test name config input expected =
+  name >:: fun _ ->
+    assert_equal expected (cipher config input)
+
+let full_config = {
+  refl = reflector_B;
+  rotors = [
+    make_rotor rotor_I 'Q' 'F';
+    make_rotor rotor_II 'E' 'U';
+    make_rotor rotor_III 'V' 'N';
+  ];
+  plugboard = [('A', 'Z')];
+}
+
 
 let make_rotor wiring turnover top_letter =
   { rotor = { wiring; turnover }; top_letter }
@@ -146,6 +160,8 @@ let suite =
     step_test "VDP to VDQ" "VDP" "VDQ";
     step_test "VDQ to VER" "VDQ" "VER";
     step_test "VER to WFS" "VER" "WFS";
+
+    cipher_test "full Enigma cipher" full_config "YNGXQ" "OCAML";
   ]
 
 let () = run_test_tt_main suite
